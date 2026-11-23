@@ -24,7 +24,7 @@ Lichess puzzle database (CC0) are bundled, so it works out of the box.
 | 💡 **Progressive hints** | Hint 1 → which piece, hint 2 → the square it stands on, hint 3 → the full move (arrow). |
 | 👤 **Accounts or guests** | JWT auth with bcrypt, or instant guest play — both are rated and tracked. |
 | 🌍 **Bilingual UI** | English and Persian (فارسی) with full RTL layout support. |
-| 🎨 **4 piece styles** | Glossy (caliente, default), Flat (chessnut), Minimal (kiwen-suwi) and Sharp (spatial) — switchable from the palette menu in the header and remembered locally. |
+| 🎨 **Neo-style pieces** | Flat, clean `staunty` artwork with crisp outlines on the classic green board. |
 | 🔊 **Sound effects** | Tiny WebAudio synth (move, capture, check, success, fail) — no audio assets. |
 | 📱 **Responsive** | Drag & drop or click-to-move, touch friendly, board scales to the viewport. |
 | 🚀 **One-command deploy** | Express serves the built SPA, or ship the client to GitHub Pages. |
@@ -70,7 +70,7 @@ DB_FILE=./data/app.db
 ```
 chess-puzzle-arena/
 ├── client/                    # React 19 + Vite + Tailwind
-│   ├── public/pieces/         # 4 switchable SVG piece sets
+│   ├── public/pieces/staunty/ # flat "neo"-style SVG pieces (CC BY-NC-SA 4.0)
 │   └── src/
 │       ├── components/        # Board, PuzzleBoard, Navbar, AuthModal, charts…
 │       ├── hooks/usePuzzle.ts # the puzzle state machine (moves, hints, solution, retry)
@@ -177,7 +177,5 @@ cloudflared tunnel --url http://localhost:3001
 
 * Code: MIT (see `LICENSE`)
 * Puzzles: [Lichess puzzle database](https://database.lichess.org/#puzzles) — CC0
-* Piece artwork: “caliente” by avi (CC BY-NC-SA 4.0), “chessnut” by Alexis Luengas (Apache-2.0),
-  “kiwen-suwi” by neverRare (CC BY 4.0), “spatial” by Maurizio Monge (MIT) — users pick their style
-  from the palette menu in the header. Note the default set is non-commercial (CC BY-NC-SA).
+* Piece artwork: “staunty” by sadsnake1 — CC BY-NC-SA 4.0 (non-commercial).
 * Not affiliated with Chess.com or Lichess.

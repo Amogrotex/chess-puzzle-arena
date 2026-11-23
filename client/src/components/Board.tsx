@@ -1,6 +1,6 @@
 import { Chess } from 'chess.js';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { pieceSrc, usePieceSet } from '../lib/pieceSet';
+import { pieceSrc } from '../lib/pieceSet';
 
 export type Orientation = 'white' | 'black';
 export interface Square {
@@ -37,11 +37,6 @@ function squareToXY(square: string, orientation: Orientation) {
   return orientation === 'white' ? { x: file, y: 7 - rank } : { x: 7 - file, y: rank };
 }
 
-export function usePieceUrl() {
-  const { pieceSet } = usePieceSet();
-  return (piece: string) => pieceSrc(pieceSet, piece);
-}
-
 const PIECE_NAME: Record<string, string> = { P: 'pawn', N: 'knight', B: 'bishop', R: 'rook', Q: 'queen', K: 'king' };
 
 interface BoardProps {
@@ -67,7 +62,6 @@ export default function Board({
   onMove,
   onSelect,
 }: BoardProps) {
-  const { pieceSet } = usePieceSet();
   const boardRef = useRef<HTMLDivElement>(null);
   const [selected, setSelected] = useState<string | null>(null);
   const [drag, setDrag] = useState<{ from: string; piece: string; x: number; y: number } | null>(null);
@@ -284,7 +278,7 @@ export default function Board({
                   }}
                 >
                   <img
-                    src={pieceSrc(pieceSet, piece)}
+                    src={pieceSrc(piece)}
                     alt={`${PIECE_NAME[piece[1]] ?? 'piece'} ${piece[0] === 'w' ? 'white' : 'black'}`}
                     className="piece-img"
                     draggable={false}
@@ -374,7 +368,7 @@ export default function Board({
                       }}
                       className="h-14 w-14 rounded-lg bg-ink-600 p-1 transition hover:bg-grass-400/30 hover:ring-2 hover:ring-grass-400"
                     >
-                      <img src={pieceSrc(pieceSet, `${color}${p.toUpperCase()}`)} alt={p} className="piece-img" />
+                      <img src={pieceSrc(`${color}${p.toUpperCase()}`)} alt={p} className="piece-img" />
                     </button>
                   );
                 })}
