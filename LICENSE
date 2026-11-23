@@ -26,6 +26,8 @@ Third-party assets bundled with this project keep their own licenses:
 * Chess puzzles — Lichess puzzle database, released under CC0 1.0
   https://database.lichess.org/#puzzles
 * Chess piece artwork (bundled piece sets, all permissive):
+  - "caliente" by avi (default) — CC BY-NC-SA 4.0
+    https://github.com/avi-0/caliente
   - "chessnut" by Alexis Luengas — Apache License 2.0
     https://github.com/LexLuengas/chessnut-pieces
   - "kiwen-suwi" by neverRare — CC BY 4.0

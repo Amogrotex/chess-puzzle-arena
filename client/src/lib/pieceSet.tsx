@@ -9,7 +9,8 @@ export interface PieceSet {
 
 /** All bundled sets live in `public/pieces/<id>/`. */
 export const PIECE_SETS: PieceSet[] = [
-  { id: 'chessnut', name: 'Modern', hint: 'Rounded, flat — the default', license: 'Apache 2.0' },
+  { id: 'caliente', name: 'Glossy', hint: 'Soft 3D shading — the default', license: 'CC BY-NC-SA 4.0' },
+  { id: 'chessnut', name: 'Flat', hint: 'Rounded, flat and bold', license: 'Apache 2.0' },
   { id: 'kiwen-suwi', name: 'Minimal', hint: 'Single-stroke silhouettes', license: 'CC BY 4.0' },
   { id: 'spatial', name: 'Sharp', hint: 'Thin geometric line art', license: 'MIT' },
 ];
