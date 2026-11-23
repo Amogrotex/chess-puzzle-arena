@@ -1,3 +1,5 @@
+import { offlineApi } from './offline';
+
 export interface User {
   id: string;
   username: string;
@@ -171,7 +173,7 @@ async function request<T>(path: string, init: RequestInit & { json?: unknown } =
 
 const post = <T>(path: string, json?: unknown) => request<T>(path, { method: 'POST', json });
 
-export const api = {
+const httpApi = {
   /* auth */
   guest: () => post<{ token: string; user: User }>('/auth/guest'),
   login: (username: string, password: string) =>
@@ -220,3 +222,11 @@ export const api = {
       `/leaderboard?type=${type}`,
     ),
 };
+
+export type ApiClient = typeof httpApi;
+
+/**
+ * App-wide API client. On a static deployment (GitHub Pages) `VITE_API_BASE=offline`
+ * makes every call run against the bundled dataset + localStorage instead.
+ */
+export const api: ApiClient = OFFLINE_MODE ? offlineApi : httpApi;

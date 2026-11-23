@@ -4,6 +4,7 @@ import { useApp } from '../store/AppContext';
 import { useI18n } from '../lib/i18n';
 import { Avatar, Knight } from './ui';
 import { sound } from '../lib/sound';
+import { OFFLINE_MODE } from '../lib/api';
 
 const links = [
   { to: '/puzzles', key: 'nav.puzzles' },
@@ -61,6 +62,14 @@ export default function Navbar({ onAuth }: { onAuth: () => void }) {
         </nav>
 
         <div className="ms-auto flex items-center gap-1.5">
+          {OFFLINE_MODE && (
+            <span
+              className="hidden rounded-md border border-amber-400/40 bg-amber-400/10 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-amber-300 sm:block"
+              title="Static demo build — puzzles and rating are stored in your browser"
+            >
+              demo
+            </span>
+          )}
           {user && !user.isGuest && (
             <span className="hidden items-center gap-1.5 rounded-md bg-ink-700 px-2.5 py-1.5 text-[13px] font-bold text-white sm:flex">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#81b64c" strokeWidth="2.5">

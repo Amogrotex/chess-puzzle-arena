@@ -29,7 +29,7 @@ jobs:
           VITE_BASE: /${{ github.event.repository.name }}/
           # Point the static site at a hosted API if you have one.
           # Leave empty to run the client in built-in offline/demo mode.
-          VITE_API_BASE: ${{ vars.API_BASE_URL }}
+          VITE_API_BASE: ${{ vars.API_BASE_URL || 'offline' }}
         run: |
           npm run build --workspace client
           # SPA fallback: GitHub Pages serves 404.html for unknown routes
