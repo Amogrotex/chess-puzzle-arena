@@ -21,6 +21,7 @@ Lichess puzzle database (CC0) are bundled, so it works out of the box.
 | ⚡ **Puzzle Rush** | 1/3/5-minute runs, three lives, streaks, personal bests and a rush leaderboard. |
 | 📅 **Daily puzzle** | One deterministic puzzle per UTC day for everybody, with streaks and a shareable result. |
 | 🗂 **73 themes** | Mates in 1–5, forks, pins, skewers, discovered attacks, zugzwang, endgames, openings… |
+| 🏅 **Move evaluation badges** | Chess.com-style icons pop up on the piece you just moved — `!!` Brilliant for sacrifices, `!` Great for quiet/defensive finds, `✓` Best — plus a “Brilliant!” banner and forced-move markers in the solution list. |
 | 💡 **Progressive hints** | Hint 1 → which piece, hint 2 → the square it stands on, hint 3 → the full move (arrow). |
 | 👤 **Accounts or guests** | JWT auth with bcrypt, or instant guest play — both are rated and tracked. |
 | 🌍 **Bilingual UI** | English and Persian (فارسی) with full RTL layout support. |

@@ -258,7 +258,8 @@ export default function RushPage() {
               lastMove={puzzle.lastMove}
               arrows={puzzle.arrows}
               hintSquare={puzzle.hintSquare}
-              shake={puzzle.shake}
+              badges={puzzle.badges}
+                shake={puzzle.shake}
               ratingDelta={null}
               onMove={(m) => void puzzle.playMove(m)}
               controls={controls}

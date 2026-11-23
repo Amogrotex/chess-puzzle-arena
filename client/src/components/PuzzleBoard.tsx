@@ -1,10 +1,13 @@
-import type { ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import Board from './Board';
 import { useApp } from '../store/AppContext';
 import { Avatar, Spinner } from './ui';
+import { BADGES, MoveBadge } from './MoveBadge';
 import { useI18n } from '../lib/i18n';
 import type { Phase } from '../hooks/usePuzzle';
 import type { Session } from '../lib/api';
+import type { BadgeKind } from './MoveBadge';
+import { MoveBadgeLabel } from './MoveBadge';
 
 interface Props {
   session: Session | null;
@@ -14,6 +17,8 @@ interface Props {
   arrows: { from: string; to: string; color?: string }[];
   hintSquare: string | null;
   shake: boolean;
+  badge?: { square: string; kind: BadgeKind } | null;
+  badges?: { square: string; kind: BadgeKind }[];
   ratingDelta: number | null;
   onMove: (m: { from: string; to: string; promotion?: string }) => void;
   controls?: ReactNode;
@@ -32,6 +37,8 @@ export default function PuzzleBoard({
   arrows,
   hintSquare,
   shake,
+  badge,
+  badges = [],
   ratingDelta,
   onMove,
   controls,
@@ -42,6 +49,19 @@ export default function PuzzleBoard({
 }: Props) {
   const { t } = useI18n();
   const { user } = useApp();
+
+  // chess.com-style "Brilliant!" / "Best move" pop-up above the board
+  const [announce, setAnnounce] = useState<BadgeKind | null>(null);
+  useEffect(() => {
+    const kind = badges[0]?.kind;
+    if (!kind || kind === 'forced') {
+      setAnnounce(null);
+      return;
+    }
+    setAnnounce(kind);
+    const id = window.setTimeout(() => setAnnounce(null), 1500);
+    return () => window.clearTimeout(id);
+  }, [badges]);
   const orientation = session?.orientation ?? 'white';
   const interactive = phase === 'ready';
   const yourTurn = session?.turn;
@@ -60,7 +80,7 @@ export default function PuzzleBoard({
       case 'solved':
         return (
           <span className="flex items-center gap-2 font-bold text-grass-300">
-            <span className="text-lg">✓</span> {t('trainer.solved')}
+            {badge ? <MoveBadgeLabel kind={badge.kind} /> : <span className="text-lg">✓</span>} {t('trainer.solved')}
             {ratingDelta !== null && (
               <span className={`mono rounded px-1.5 text-sm ${ratingDelta >= 0 ? 'text-grass-300' : 'text-red-300'}`}>
                 {ratingDelta >= 0 ? '+' : ''}
@@ -114,9 +134,20 @@ export default function PuzzleBoard({
       )}
 
       <div
-        className={`mx-auto w-full px-2 sm:px-3 ${compact ? 'pb-1' : 'pb-2'}`}
+        className={`relative mx-auto w-full px-2 sm:px-3 ${compact ? 'pb-1' : 'pb-2'}`}
         style={{ maxWidth: `min(100%, calc(100vh - ${maxHeightOffset}), 660px)` }}
       >
+        {announce && (
+          <div className="pointer-events-none absolute left-1/2 top-2 z-40 -translate-x-1/2 animate-popIn">
+            <span
+              className="flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-extrabold text-white shadow-pop"
+              style={{ background: `linear-gradient(180deg, ${BADGES[announce].color}, ${BADGES[announce].color}cc)` }}
+            >
+              <MoveBadge kind={announce} size={18} />
+              {BADGES[announce].label}!
+            </span>
+          </div>
+        )}
         <Board
           fen={fen || '8/8/8/8/8/8/8/8 w - - 0 1'}
           orientation={orientation}
@@ -124,6 +155,7 @@ export default function PuzzleBoard({
           lastMove={lastMove}
           arrows={arrows}
           hintSquare={hintSquare}
+          badges={badges.length ? badges : badge ? [badge] : []}
           shake={shake}
           onMove={onMove}
         />

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { usePuzzle } from '../hooks/usePuzzle';
 import PuzzleBoard from '../components/PuzzleBoard';
+import { MoveBadge } from '../components/MoveBadge';
 import { useApp } from '../store/AppContext';
 import { useI18n } from '../lib/i18n';
 
@@ -83,6 +84,7 @@ export default function DailyPage() {
           lastMove={puzzle.lastMove}
           arrows={puzzle.arrows}
           hintSquare={puzzle.hintSquare}
+          badges={puzzle.badges}
           shake={puzzle.shake}
           ratingDelta={null}
           onMove={(m) => void puzzle.playMove(m)}
@@ -165,8 +167,12 @@ export default function DailyPage() {
               {puzzle.solution.length > 0 && (
                 <div className="mt-3 flex flex-wrap gap-1.5 border-t border-ink-600 pt-2">
                   {puzzle.solution.map((m, i) => (
-                    <span key={m.uci} className="rounded bg-ink-600 px-1.5 py-0.5 font-mono text-[12px] text-ink-100">
-                      {i + 1}. {m.san}
+                    <span
+                      key={m.uci}
+                      className="flex items-center gap-1 rounded bg-ink-600 px-1.5 py-0.5 font-mono text-[12px] text-ink-100"
+                    >
+                      <MoveBadge kind={i % 2 === 0 ? 'best' : 'forced'} size={13} />
+                      {m.san}
                     </span>
                   ))}
                 </div>

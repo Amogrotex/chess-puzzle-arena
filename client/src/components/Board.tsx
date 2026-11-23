@@ -1,6 +1,7 @@
 import { Chess } from 'chess.js';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { pieceSrc } from '../lib/pieceSet';
+import { MoveBadge, type BadgeKind } from './MoveBadge';
 
 export type Orientation = 'white' | 'black';
 export interface Square {
@@ -46,6 +47,8 @@ interface BoardProps {
   lastMove?: Square | null;
   arrows?: Arrow[];
   hintSquare?: string | null;
+  /** analysis icons shown on squares, chess.com style */
+  badges?: { square: string; kind: BadgeKind }[];
   shake?: boolean;
   onMove?: (move: { from: string; to: string; promotion?: string }) => void;
   onSelect?: (square: string | null) => void;
@@ -58,6 +61,7 @@ export default function Board({
   lastMove,
   arrows = [],
   hintSquare,
+  badges = [],
   shake,
   onMove,
   onSelect,
@@ -292,6 +296,18 @@ export default function Board({
               {isCaptureTarget && (
                 <div className="pointer-events-none absolute inset-[6%] z-30 rounded-full border-[6px] border-black/20" />
               )}
+
+              {badges
+                .filter((b) => b.square === square)
+                .map((b, bi) => (
+                  <div
+                    key={`${b.kind}-${bi}`}
+                    className="pointer-events-none absolute z-40 animate-popIn"
+                    style={{ right: 2 + bi * 20, top: 2 }}
+                  >
+                    <MoveBadge kind={b.kind} size={19} />
+                  </div>
+                ))}
 
               {showFile && (
                 <span

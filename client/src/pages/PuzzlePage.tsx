@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { usePuzzle } from '../hooks/usePuzzle';
 import PuzzleBoard from '../components/PuzzleBoard';
+import { MoveBadge } from '../components/MoveBadge';
 import { RatingChart } from '../components/ui';
 import { useApp } from '../store/AppContext';
 import { useI18n, type TKey } from '../lib/i18n';
@@ -128,6 +129,7 @@ export default function PuzzlePage() {
             lastMove={puzzle.lastMove}
             arrows={puzzle.arrows}
             hintSquare={puzzle.hintSquare}
+            badges={puzzle.badges}
             shake={puzzle.shake}
             ratingDelta={puzzle.ratingDelta}
             onMove={(m) => void puzzle.playMove(m)}
@@ -171,9 +173,10 @@ export default function PuzzlePage() {
                   {puzzle.solution.map((m, i) => (
                     <span
                       key={m.uci}
-                      className="rounded bg-ink-600 px-1.5 py-0.5 font-mono text-[12px] text-ink-100"
+                      className="flex items-center gap-1 rounded bg-ink-600 px-1.5 py-0.5 font-mono text-[12px] text-ink-100"
                     >
-                      {i + 1}. {m.san}
+                      <MoveBadge kind={i % 2 === 0 ? 'best' : 'forced'} size={13} />
+                      {m.san}
                     </span>
                   ))}
                 </div>

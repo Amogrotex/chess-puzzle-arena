@@ -2,6 +2,7 @@ import { Chess } from 'chess.js';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { api, type MoveResponse, type PuzzleInfo, type Session } from '../lib/api';
 import { fenToPieces } from '../components/Board';
+import type { BadgeKind } from '../components/MoveBadge';
 import { sound } from '../lib/sound';
 
 export type Phase = 'loading' | 'ready' | 'opponent' | 'solved' | 'failed' | 'revealed' | 'error';
@@ -28,6 +29,7 @@ export function usePuzzle({ mode, theme, difficulty, autoLoad = true, onSolved, 
   const [lastMove, setLastMove] = useState<MoveAnim | null>(null);
   const [arrows, setArrows] = useState<{ from: string; to: string; color?: string }[]>([]);
   const [hintSquare, setHintSquare] = useState<string | null>(null);
+  const [badges, setBadges] = useState<{ square: string; kind: BadgeKind }[]>([]);
   const [shake, setShake] = useState(false);
   const [busy, setBusy] = useState(false);
   const [solution, setSolution] = useState<{ uci: string; san: string }[]>([]);
@@ -50,6 +52,7 @@ export function usePuzzle({ mode, theme, difficulty, autoLoad = true, onSolved, 
     setLastMove(null);
     setArrows([]);
     setHintSquare(null);
+    setBadges([]);
     setSolution([]);
     setPuzzle(null);
     setRatingDelta(null);
@@ -98,12 +101,30 @@ export function usePuzzle({ mode, theme, difficulty, autoLoad = true, onSolved, 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode, theme, difficulty, autoLoad]);
 
+  /** Rough chess.com-style annotation for the move the player just found. */
+  const classifyMove = useCallback(
+    (res: MoveResponse, themes: string[]): BadgeKind => {
+      let mate = false;
+      try {
+        mate = new Chess(res.fen).isCheckmate();
+      } catch {
+        /* ignore */
+      }
+      if (themes.includes('sacrifice')) return 'brilliant';
+      if (themes.includes('quietMove') || themes.includes('defensiveMove')) return 'great';
+      if (mate) return 'best';
+      return 'best';
+    },
+    [],
+  );
+
   const playMove = useCallback(
     async (move: { from: string; to: string; promotion?: string }) => {
       if (!session || phase !== 'ready' || busy) return;
       setBusy(true);
       setArrows([]);
       setHintSquare(null);
+      setBadges([]);
       const wasCapture = !!fenToPieces(fen)[move.to];
 
       try {
@@ -130,6 +151,7 @@ export function usePuzzle({ mode, theme, difficulty, autoLoad = true, onSolved, 
         // the player's move was right
         setFen(res.fen);
         setLastMove({ from: move.from, to: move.to });
+        setBadges([{ square: move.to, kind: classifyMove(res, session.themes) }]);
         if (wasCapture) sound.capture();
         else sound.move();
 
@@ -166,7 +188,7 @@ export function usePuzzle({ mode, theme, difficulty, autoLoad = true, onSolved, 
         setBusy(false);
       }
     },
-    [busy, fen, onFailed, onSolved, phase, session],
+    [busy, classifyMove, fen, onFailed, onSolved, phase, session],
   );
 
   const takeHint = useCallback(async () => {
@@ -201,7 +223,7 @@ export function usePuzzle({ mode, theme, difficulty, autoLoad = true, onSolved, 
       // animate the whole line from the start position
       const board = new Chess(session.fen);
       let delay = 220;
-      res.solution.forEach((m) => {
+      res.solution.forEach((m, i) => {
         const uci = m.uci;
         const nextFen = (() => {
           const clone = new Chess(board.fen());
@@ -213,6 +235,7 @@ export function usePuzzle({ mode, theme, difficulty, autoLoad = true, onSolved, 
           window.setTimeout(() => {
             setFen(nextFen);
             setLastMove({ from: uci.slice(0, 2), to: uci.slice(2, 4) });
+            setBadges([{ square: uci.slice(2, 4), kind: i % 2 === 0 ? 'best' : 'forced' }]);
             sound.move();
           }, delay),
         );
@@ -252,6 +275,8 @@ export function usePuzzle({ mode, theme, difficulty, autoLoad = true, onSolved, 
     lastMove,
     arrows,
     hintSquare,
+    badges,
+    badge: badges[0] ?? null,
     shake,
     solution,
     puzzle,
