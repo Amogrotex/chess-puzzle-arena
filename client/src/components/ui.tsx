@@ -109,8 +109,12 @@ export function RatingChart({
   const width = 320;
   const pad = 6;
   const ratings = data.map((d) => d.rating);
-  const min = Math.min(...ratings) - 10;
-  const max = Math.max(...ratings) + 10;
+  const lo = Math.min(...ratings);
+  const hi = Math.max(...ratings);
+  // keep the curve readable when the rating barely moves
+  const vpad = Math.max(12, (hi - lo) * 0.15);
+  const min = lo - vpad;
+  const max = hi + vpad;
   const span = Math.max(1, max - min);
   const xs = (i: number) => pad + (i / (data.length - 1)) * (width - pad * 2);
   const ys = (r: number) => height - pad - ((r - min) / span) * (height - pad * 2);

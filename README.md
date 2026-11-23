@@ -24,6 +24,7 @@ Lichess puzzle database (CC0) are bundled, so it works out of the box.
 | 💡 **Progressive hints** | Hint 1 → which piece, hint 2 → the square it stands on, hint 3 → the full move (arrow). |
 | 👤 **Accounts or guests** | JWT auth with bcrypt, or instant guest play — both are rated and tracked. |
 | 🌍 **Bilingual UI** | English and Persian (فارسی) with full RTL layout support. |
+| 🎨 **3 piece styles** | Modern (chessnut), Minimal (kiwen-suwi) and Sharp (spatial) — switchable from the header, remembered locally. |
 | 🔊 **Sound effects** | Tiny WebAudio synth (move, capture, check, success, fail) — no audio assets. |
 | 📱 **Responsive** | Drag & drop or click-to-move, touch friendly, board scales to the viewport. |
 | 🚀 **One-command deploy** | Express serves the built SPA, or ship the client to GitHub Pages. |
@@ -69,7 +70,7 @@ DB_FILE=./data/app.db
 ```
 chess-puzzle-arena/
 ├── client/                    # React 19 + Vite + Tailwind
-│   ├── public/pieces/         # cburnett SVG piece set (CC BY-SA 3.0)
+│   ├── public/pieces/         # 3 SVG piece sets (Apache-2.0 / CC BY 4.0 / MIT)
 │   └── src/
 │       ├── components/        # Board, PuzzleBoard, Navbar, AuthModal, charts…
 │       ├── hooks/usePuzzle.ts # the puzzle state machine (moves, hints, solution, retry)
@@ -176,5 +177,6 @@ cloudflared tunnel --url http://localhost:3001
 
 * Code: MIT (see `LICENSE`)
 * Puzzles: [Lichess puzzle database](https://database.lichess.org/#puzzles) — CC0
-* Piece artwork: “cburnett” by Colin M.L. Burnett — CC BY-SA 3.0
+* Piece artwork: “chessnut” by Alexis Luengas (Apache-2.0), “kiwen-suwi” by neverRare (CC BY 4.0),
+  “spatial” by Maurizio Monge (MIT) — users pick their style from the palette menu in the header.
 * Not affiliated with Chess.com or Lichess.

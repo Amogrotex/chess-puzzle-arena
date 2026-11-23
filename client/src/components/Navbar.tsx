@@ -5,6 +5,7 @@ import { useI18n } from '../lib/i18n';
 import { Avatar, Knight } from './ui';
 import { sound } from '../lib/sound';
 import { OFFLINE_MODE } from '../lib/api';
+import { PIECE_SETS, pieceSrc, usePieceSet } from '../lib/pieceSet';
 
 const links = [
   { to: '/puzzles', key: 'nav.puzzles' },
@@ -21,7 +22,10 @@ export default function Navbar({ onAuth }: { onAuth: () => void }) {
   const [open, setOpen] = useState(false);
   const [menu, setMenu] = useState(false);
   const [muted, setMuted] = useState(sound.muted);
+  const [piecesOpen, setPiecesOpen] = useState(false);
+  const { pieceSet, setPieceSet } = usePieceSet();
   const menuRef = useRef<HTMLDivElement>(null);
+  const piecesRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
 
   useEffect(() => {
@@ -32,6 +36,7 @@ export default function Navbar({ onAuth }: { onAuth: () => void }) {
   useEffect(() => {
     const onClick = (e: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) setMenu(false);
+      if (piecesRef.current && !piecesRef.current.contains(e.target as Node)) setPiecesOpen(false);
     };
     document.addEventListener('mousedown', onClick);
     return () => document.removeEventListener('mousedown', onClick);
@@ -79,6 +84,57 @@ export default function Navbar({ onAuth }: { onAuth: () => void }) {
               {stats?.streak ? <span title="daily streak">🔥{stats.streak}</span> : null}
             </span>
           )}
+
+          {/* piece set picker */}
+          <div className="relative" ref={piecesRef}>
+            <button
+              onClick={() => setPiecesOpen((o) => !o)}
+              className={`rounded-md p-2 transition hover:bg-ink-700 ${piecesOpen ? 'bg-ink-700 text-white' : 'text-ink-300 hover:text-white'}`}
+              title="Piece style"
+              aria-label="piece style"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="13.5" cy="6.5" r="2.5" />
+                <circle cx="17.5" cy="14.5" r="2.5" />
+                <circle cx="8.5" cy="16.5" r="2.5" />
+                <path d="M12 12l-1.5-1.5M15 12l1.5 1M10 14l-1 1.5" />
+              </svg>
+            </button>
+            {piecesOpen && (
+              <div className="absolute end-0 mt-1 w-60 animate-slideUp overflow-hidden rounded-lg border border-ink-600 bg-ink-700 p-1.5 shadow-pop">
+                <div className="px-1.5 pb-1.5 text-[10px] font-bold uppercase tracking-widest text-ink-300">
+                  Piece style
+                </div>
+                {PIECE_SETS.map((set) => (
+                  <button
+                    key={set.id}
+                    onClick={() => {
+                      setPieceSet(set.id);
+                      setPiecesOpen(false);
+                      sound.tick();
+                    }}
+                    className={`flex w-full items-center gap-2 rounded-md p-1.5 text-start transition ${
+                      pieceSet === set.id ? 'bg-grass-400/15 ring-1 ring-grass-400/60' : 'hover:bg-ink-600'
+                    }`}
+                  >
+                    <span className="flex h-8 w-16 shrink-0 items-center justify-center gap-px overflow-hidden rounded bg-[#769656]">
+                      {['wN', 'wQ', 'bK'].map((pc) => (
+                        <img key={pc} src={pieceSrc(set.id, pc)} alt="" className="h-6 w-6" />
+                      ))}
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate text-[13px] font-semibold text-white">{set.name}</span>
+                      <span className="block truncate text-[10px] text-ink-300">{set.hint}</span>
+                    </span>
+                    {pieceSet === set.id && <span className="text-grass-300">✓</span>}
+                  </button>
+                ))}
+                <div className="px-1.5 pt-1 text-[9px] text-ink-400">
+                  {PIECE_SETS.map((s) => s.license).join(' · ')}
+                </div>
+              </div>
+            )}
+          </div>
 
           <button
             onClick={() => {
